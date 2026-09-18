@@ -136,7 +136,7 @@ TANGLISH_WORDS = {
     "naan": "நான்", "naa": "நான்", "nee": "நீ", "neenga": "நீங்க",
     "avan": "அவன்", "aval": "அவ", "ava": "அவ", "avanga": "அவங்க",
     "ivan": "இவன்", "ival": "இவ", "iva": "இவ", "ivanga": "இவங்க",
-    "namma": "நம்ம", "naanga": "நாங்க", "enga": "எங்க",
+    "namma": "நம்ம", "naanga": "நாங்க",
     "ennoda": "என்னோட", "unoda": "உன்னோட", "ungalaoda": "உங்களோட", "ungoda": "உங்களோட",
     "iruka": "இருக்க", "irruka": "இருக்க", "irukka": "இருக்க",
     "irukinga": "இருக்கீங்க", "irukeenga": "இருக்கீங்க",
