@@ -73,6 +73,7 @@ import huggingface_hub
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 from IndicTransToolkit.processor import IndicProcessor
 from colloquial import to_colloquial
+from slang import prepare_source, finish_target, generate_kwargs, dedupe_repeats
 from tanglish import is_tanglish, tanglish_to_tamil, tanglish_to_semantic_tamil
 
 LANGUAGES = {
@@ -161,6 +162,9 @@ class IndicTranslator:
         model_name = get_model_name(src_code, tgt_code)
         model, tokenizer = self.load_model(model_name)
 
+        original_text = text
+        text, had_vocative = prepare_source(text, src_code)
+
         batch = self.processor.preprocess_batch([text], src_lang=src_code, tgt_lang=tgt_code)
         inputs = tokenizer(batch, padding='longest', return_tensors='pt').to(DEVICE)
 
@@ -168,17 +172,17 @@ class IndicTranslator:
             outputs = model.generate(
                 **inputs,
                 max_length=256,
-                num_beams=4,
                 use_cache=False,
-                num_return_sequences=1,
+                **generate_kwargs(text),
             )
 
         decoded = tokenizer.batch_decode(outputs, skip_special_tokens=True)
         translations = self.processor.postprocess_batch(decoded, lang=tgt_code)
-        raw_result = translations[0]
+        raw_result = dedupe_repeats(translations[0])
 
         if tone == 'casual':
-            return to_colloquial(raw_result, tgt_code, src_text=text)
+            colloquial = to_colloquial(raw_result, tgt_code, src_text=original_text)
+            return finish_target(colloquial, tgt_code, had_vocative, tone)
         return raw_result
 
 def interactive_mode(translator):
